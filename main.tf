@@ -30,7 +30,7 @@ resource "ibm_resource_instance" "cos_instance" {
 }
 
 resource "ibm_container_vpc_cluster" "cluster" {
-  name              = "roks-vpc-cluster-jej-e2e"
+  name              = "roks-vpc-cluster-jej-iks-e2e"
   vpc_id            = ibm_is_vpc.vpc.id
   # kube_version      = "4.17.28_openshift"
   kube_version      = "1.32.5"
@@ -48,7 +48,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 }
 
 data "ibm_container_vpc_cluster" "cluster_data" {
-  name              = "roks-vpc-cluster-jej-e2e"
+  name              = "roks-vpc-cluster-jej-iks-e2e"
   depends_on = [ ibm_container_vpc_cluster.cluster ]
 }
 

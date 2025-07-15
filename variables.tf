@@ -17,7 +17,7 @@ variable "zone" {
 
 variable "vpc_name" {
   type        = string
-  default     = "jej-cluster-vpc-e2e"
+  default     = "jej-cluster-vpc-iks-e2e"
 }
 
 variable "ocp_entitlement" {
@@ -58,7 +58,7 @@ variable "ocp_entitlement" {
 
 variable "cos_name" {
   type        = string
-  default     = "jej-cos-mon-e2e"
+  default     = "jej-cos-mon-iks-e2e"
 }
 
 variable "resource_group_id" {
