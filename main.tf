@@ -48,7 +48,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 }
 
 data "ibm_container_vpc_cluster" "cluster_data" {
-  name              = "roks-vpc-cluster-jej-iks-e2e"
+  name              = var.cluster_name
   depends_on = [ ibm_container_vpc_cluster.cluster ]
 }
 
