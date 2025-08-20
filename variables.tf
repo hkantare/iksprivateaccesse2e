@@ -65,3 +65,8 @@ variable "resource_group_id" {
   type        = string
   default     = "default"
 }
+
+variable "cluster_name" {
+  type        = string
+  default     = "jej-cluster-vpc-iks-e2e"
+}
