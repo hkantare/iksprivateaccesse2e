@@ -64,7 +64,7 @@ provider "kubernetes" {
 
 
 resource "kubernetes_namespace" "example" {
-depends_on = [ ibm_is_security_group_rule.kube_ingress_tcp_443, ibm_is_security_group_rule.kube_ingress_tcp_80, ibm_is_security_group_target.kube_security_group_target]
+depends_on = [ ibm_is_security_group_rule.kube_ingress_tcp_443, ibm_is_security_group_rule.kube_ingress_tcp_80 ]
   metadata {
     name = "jej-eg-namespace"
   }
