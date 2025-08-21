@@ -202,3 +202,10 @@ variable "prefix" {
   type        = string
   default     = "ikssch"
 }
+
+variable "iks_control_plane_cidrs" {
+  description = "IKS Control Plane https://github.com/IBM-Cloud/kube-samples/tree/master/control-plane-ips"
+  type        = list(string)
+  default = []
+}
+
