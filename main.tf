@@ -55,13 +55,20 @@ data "ibm_container_vpc_cluster" "cluster_data" {
 data "ibm_container_cluster_config" "cluster_config" {
   cluster_name_id   = data.ibm_container_vpc_cluster.cluster_data.id
   # endpoint_type = "vpe"
+  admin           = true
 }
 
-provider "kubernetes" {
+/*provider "kubernetes" {
   host  = data.ibm_container_cluster_config.cluster_config.host
   token = data.ibm_container_cluster_config.cluster_config.token
-}
+}*/
 
+provider "kubernetes" {
+  host                   = data.ibm_container_cluster_config.cluster_config.host
+  client_certificate     = data.ibm_container_cluster_config.cluster_config.admin_certificate
+  client_key             = data.ibm_container_cluster_config.cluster_config.admin_key
+  cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config.ca_certificate
+}
 
 resource "kubernetes_namespace" "example" {
 depends_on = [ ibm_is_security_group_rule.kube_ingress_tcp_443, ibm_is_security_group_rule.kube_ingress_tcp_80 ]
