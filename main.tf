@@ -64,7 +64,7 @@ provider "kubernetes" {
 
 
 resource "kubernetes_namespace" "example" {
-depends_on = [ ibm_is_security_group_rule.kube_ingress_tcp_443, ibm_is_security_group_rule.kube_ingress_tcp_80 ]
+depends_on = [ ibm_is_security_group_rule.kube_ingress_tcp_443, ibm_is_security_group_rule.kube_ingress_tcp_80, ibm_is_security_group_target.kube_security_group_target ]
   metadata {
     name = "jej-eg-namespace"
   }
@@ -86,8 +86,7 @@ resource "ibm_is_security_group" "kube_security_group" {
 
 resource "ibm_is_security_group_target" "kube_security_group_target" {
   security_group = ibm_is_security_group.kube_security_group.id
-  target         = local.public_lbs[0]
-}
+  target         = "r018-4479ffc4-35ee-4549-b551-4bf077cdf203"
 
 locals {
   inbound_cidrs = concat(var.inbound_cidrs, var.iks_control_plane_cidrs)
