@@ -20,7 +20,7 @@ resource "ibm_is_subnet" "subnet" {
 # Resource to create COS instance if create_cos_instance is true
 resource "ibm_resource_instance" "cos_instance" {
   name              = var.cos_name
-  # resource_group_id = var.resource_group_id
+  # resource_group_id = ibm_resource_group.resource_group.id
   service           = "cloud-object-storage"
   plan              = "standard"
   location          = "global"
@@ -64,7 +64,78 @@ provider "kubernetes" {
 
 
 resource "kubernetes_namespace" "example" {
+depends_on = [ ibm_is_security_group_rule.kube_ingress_tcp_443, ibm_is_security_group_rule.kube_ingress_tcp_80 ]
   metadata {
     name = "jej-eg-namespace"
   }
 }
+
+data "ibm_is_lbs" "lbs" {
+}
+
+locals {
+  lbs        = [for lb in data.ibm_is_lbs.lbs.load_balancers : lb if length(lb.public_ips) > 0 && lb.profile.family == "application"]
+  public_lbs = [for lb in local.lbs : lb.id]
+}
+
+resource "ibm_is_security_group" "kube_security_group" {
+  name           = "${var.prefix}-kube-security-group"
+  vpc            = ibm_is_vpc.vpc.id
+  resource_group = ibm_resource_group.resource_group.id
+}
+
+resource "ibm_is_security_group_target" "kube_security_group_target" {
+  security_group = ibm_is_security_group.kube_security_group.id
+  target         = local.public_lbs[0]
+}
+
+locals {
+  inbound_cidrs = concat(var.inbound_cidrs, var.iks_control_plane_cidrs)
+}
+
+resource "ibm_is_security_group_rule" "kube_ingress_tcp_80" {
+  for_each = tomap({
+    for rule in local.inbound_cidrs : rule => {}
+  })
+  group     = ibm_is_security_group.kube_security_group.id
+  direction = "inbound"
+  remote    = each.key
+  tcp {
+    port_min = 80
+    port_max = 80
+  }
+}
+
+resource "ibm_is_security_group_rule" "kube_ingress_tcp_443" {
+  for_each = tomap({
+    for rule in local.inbound_cidrs : rule => {}
+  })
+  group     = ibm_is_security_group.kube_security_group.id
+  direction = "inbound"
+  remote    = each.key
+  tcp {
+    port_min = 443
+    port_max = 443
+  }
+}
+
+resource "ibm_is_security_group_rule" "kube_egress_tcp" {
+  group     = ibm_is_security_group.kube_security_group.id
+  direction = "outbound"
+  remote    = "0.0.0.0/0"
+  tcp {
+    port_min = 30000
+    port_max = 32767
+  }
+}
+
+resource "ibm_is_security_group_rule" "kube_egress_udp" {
+  group     = ibm_is_security_group.kube_security_group.id
+  direction = "outbound"
+  remote    = "0.0.0.0/0"
+  udp {
+    port_min = 30000
+    port_max = 32767
+  }
+}
+
