@@ -73,10 +73,10 @@ depends_on = [ ibm_is_security_group_rule.kube_ingress_tcp_443, ibm_is_security_
 data "ibm_is_lbs" "lbs" {
 }
 
-locals {
+/*locals {
   lbs        = [for lb in data.ibm_is_lbs.lbs.load_balancers : lb if length(lb.public_ips) > 0 && lb.profile.family == "application"]
   public_lbs = [for lb in local.lbs : lb.id]
-}
+}*/
 
 resource "ibm_is_security_group" "kube_security_group" {
   name           = "${var.prefix}-kube-security-group"
@@ -86,7 +86,7 @@ resource "ibm_is_security_group" "kube_security_group" {
 
 resource "ibm_is_security_group_target" "kube_security_group_target" {
   security_group = ibm_is_security_group.kube_security_group.id
-  target         = local.public_lbs[0]
+  target         = "r018-4479ffc4-35ee-4549-b551-4bf077cdf203"
 }
 
 locals {
