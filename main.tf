@@ -20,7 +20,7 @@ resource "ibm_is_subnet" "subnet" {
 # Resource to create COS instance if create_cos_instance is true
 resource "ibm_resource_instance" "cos_instance" {
   name              = var.cos_name
-  # resource_group_id = ibm_resource_group.resource_group.id
+  # resource_group_id = data.ibm_resource_group.resource_group.id
   service           = "cloud-object-storage"
   plan              = "standard"
   location          = "global"
@@ -81,7 +81,7 @@ locals {
 resource "ibm_is_security_group" "kube_security_group" {
   name           = "${var.prefix}-kube-security-group"
   vpc            = ibm_is_vpc.vpc.id
-  resource_group = ibm_resource_group.resource_group.id
+  resource_group = data.ibm_resource_group.resource_group.id
 }
 
 resource "ibm_is_security_group_target" "kube_security_group_target" {
