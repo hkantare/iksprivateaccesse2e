@@ -54,7 +54,7 @@ data "ibm_container_vpc_cluster" "cluster_data" {
 
 data "ibm_container_cluster_config" "cluster_config" {
   cluster_name_id   = data.ibm_container_vpc_cluster.cluster_data.id
-  endpoint_type = "vpe"
+  // endpoint_type = "vpe"
   admin           = true
 }
 
